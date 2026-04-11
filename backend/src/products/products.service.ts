@@ -15,4 +15,16 @@ export class ProductsService {
   findOne(id: number) {
     return this.products.find((product) => product.id === id);
   }
+
+  create(productData: { name: string; price: number }) {
+    const newProduct = {
+      id: this.products.length + 1,
+      name: productData.name,
+      price: productData.price,
+    };
+
+    this.products.push(newProduct);
+
+    return newProduct;
+  }
 }
