@@ -27,4 +27,17 @@ export class ProductsService {
 
     return newProduct;
   }
+
+  remove(id: number) {
+    const productIndex = this.products.findIndex(
+      (product) => product.id === id,
+    );
+    if (productIndex === -1) {
+      return { message: 'Product not found' };
+    }
+    const deleteProduct = this.products[productIndex];
+    this.products.splice(productIndex, 1);
+
+    return deleteProduct;
+  }
 }
