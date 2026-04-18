@@ -26,8 +26,8 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Body() body: { name: string; price: number }) {
-    return this.productsService.create(body);
+  create(@Body() createProductDto: CreateProductDto) {
+    return this.productsService.create(createProductDto);
   }
 
   @Patch(':id')
