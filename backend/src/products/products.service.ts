@@ -35,9 +35,9 @@ export class ProductsService {
     });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
+  async update(id: number, updateProductDto: UpdateProductDto) {
     try {
-      return this.prisma.product.update({
+      return await this.prisma.product.update({
         where: { id },
         data: updateProductDto,
       });
@@ -52,9 +52,9 @@ export class ProductsService {
     }
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     try {
-      return this.prisma.product.delete({
+      return await this.prisma.product.delete({
         where: { id },
       });
     } catch (error) {
