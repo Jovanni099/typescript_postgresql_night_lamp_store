@@ -8,8 +8,11 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
+  findAll(status?: string) {
     return this.prisma.product.findMany({
+      where: status
+        ? { status: status as any }
+        : { status: 'ACTIVE', stock: { gt: 0 } },
       orderBy: { id: 'asc' },
     });
   }
