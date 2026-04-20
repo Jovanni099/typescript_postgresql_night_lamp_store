@@ -6,10 +6,26 @@ datasource db {
   provider = "postgresql"
 }
 
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  OUT_OF_STOCK
+  ARCHIVED
+}
+
+
+
+
 model Product {
-  id        Int      @id @default(autoincrement())
-  name      String
-  price     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int           @id @default(autoincrement())
+  name        String
+  slug        String        @unique
+  description String?
+  imageUrl   String?
+  price       Int   
+  stock       Int           @default(0)
+  sku         String?       @unique
+  status      ProductStatus @default(DRAFT)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }

@@ -30,7 +30,13 @@ export class ProductsService {
     return this.prisma.product.create({
       data: {
         name: createProductDto.name,
+        slug: createProductDto.slug,
+        description: createProductDto.description,
+        imageUrl: createProductDto.imageUrl,
         price: createProductDto.price,
+        stock: createProductDto.stock,
+        sku: createProductDto.sku,
+        status: createProductDto.status,
       },
     });
   }
