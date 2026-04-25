@@ -3,18 +3,58 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductStatus } from '@prisma/client';
+import { contains } from 'class-validator';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll(status?: string) {
-    return this.prisma.product.findMany({
-      where: status
-        ? { status: status as any }
-        : { status: 'ACTIVE', stock: { gt: 0 } },
-      orderBy: { id: 'asc' },
-    });
+  async findAll(params: {
+    status?: string;
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
+    const { status, page = 1, limit = 10, search = '' } = params;
+
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.ProductWhereInput = status
+      ? {
+          status: status as ProductStatus,
+          name: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        }
+      : {
+          status: 'ACTIVE',
+          stock: { gt: 0 },
+          name: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        };
+
+    const [items, total] = await Promise.all([
+      this.prisma.product.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { id: 'asc' },
+      }),
+      this.prisma.product.count({ where }),
+    ]);
+    return {
+      data: items,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOne(id: number) {
