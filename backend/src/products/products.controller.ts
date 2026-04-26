@@ -11,23 +11,15 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { FindProductsDto } from './dto/find-products.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  findAll(
-    @Query('status') status?: string,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-    @Query('search') search?: string,
-  ) {
-    return this.productsService.findAll({
-      page: Number(page) || 1,
-      limit: Number(limit) || 10,
-      search: search || '',
-    });
+  findAll(@Query() query: FindProductsDto) {
+    return this.productsService.findAll(query);
   }
 
   @Get(':id')

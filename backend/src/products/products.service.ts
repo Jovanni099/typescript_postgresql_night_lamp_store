@@ -5,18 +5,14 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductStatus } from '@prisma/client';
 import { contains } from 'class-validator';
+import { FindProductsDto } from './dto/find-products.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(params: {
-    status?: string;
-    page?: number;
-    limit?: number;
-    search?: string;
-  }) {
-    const { status, page = 1, limit = 10, search = '' } = params;
+  async findAll(query: FindProductsDto) {
+    const { status, page = 1, limit = 10, search = '' } = query;
 
     const skip = (page - 1) * limit;
 
@@ -46,6 +42,7 @@ export class ProductsService {
       }),
       this.prisma.product.count({ where }),
     ]);
+
     return {
       data: items,
       meta: {
