@@ -4,34 +4,80 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductStatus } from '@prisma/client';
-import { contains } from 'class-validator';
-import { FindProductsDto } from './dto/find-products.dto';
+// import { contains } from 'class-validator';
+import { FindProductsDto, ProductSort } from './dto/find-products.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(query: FindProductsDto) {
-    const { status, page = 1, limit = 10, search = '' } = query;
+    const {
+      status,
+      page = 1,
+      limit = 10,
+      search = '',
+      sort = ProductSort.newest,
+      minPrice,
+      maxPrice,
+    } = query;
 
     const skip = (page - 1) * limit;
 
-    const where: Prisma.ProductWhereInput = status
-      ? {
-          status: status as ProductStatus,
-          name: {
-            contains: search,
-            mode: 'insensitive',
-          },
-        }
-      : {
-          status: 'ACTIVE',
-          stock: { gt: 0 },
-          name: {
-            contains: search,
-            mode: 'insensitive',
-          },
-        };
+    // const where: Prisma.ProductWhereInput = status
+    //   ? {
+    //       status: status as ProductStatus,
+    //       name: {
+    //         contains: search,
+    //         mode: 'insensitive',
+    //       },
+    //     }
+    //   : {
+    //       status: 'ACTIVE',
+    //       stock: { gt: 0 },
+    //       name: {
+    //         contains: search,
+    //         mode: 'insensitive',
+    //       },
+    //     };
+
+    const where: Prisma.ProductWhereInput = {
+      name: {
+        contains: search,
+        mode: 'insensitive',
+      },
+    };
+
+    if (status) {
+      where.status = status as ProductStatus;
+    } else {
+      where.status = 'ACTIVE';
+      where.stock = { gt: 0 };
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.price = {};
+    }
+
+    if (minPrice !== undefined) {
+      (where.price as any).gte = minPrice;
+    }
+
+    if (maxPrice !== undefined) {
+      (where.price as any).lte = maxPrice;
+    }
+
+    let orderBy: Prisma.ProductOrderByWithRelationInput = {
+      createdAt: 'desc',
+    };
+
+    if (sort === ProductSort.price_asc) {
+      orderBy = { price: 'asc' };
+    }
+
+    if (sort === ProductSort.price_desc) {
+      orderBy = { price: 'desc' };
+    }
 
     const [items, total] = await Promise.all([
       this.prisma.product.findMany({
