@@ -7,6 +7,7 @@ export enum ProductSort {
   newest = 'newest',
   price_asc = 'price_asc',
   price_desc = 'price_desc',
+  name_asc = 'name_asc',
 }
 
 export class FindProductsDto {
@@ -33,7 +34,7 @@ export class FindProductsDto {
 
   @IsOptional()
   @IsEnum(ProductSort)
-  sort?: ProductSort = ProductSort.newest;
+  sort?: ProductSort;
 
   @IsOptional()
   @Type(() => Number)

@@ -79,6 +79,10 @@ export class ProductsService {
       orderBy = { price: 'desc' };
     }
 
+    if (sort === ProductSort.name_asc) {
+      orderBy = { name: 'asc' };
+    }
+
     const [items, total] = await Promise.all([
       this.prisma.product.findMany({
         where,
