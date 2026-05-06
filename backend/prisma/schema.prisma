@@ -24,6 +24,7 @@ model Product {
   imageUrl   String?
   price       Int   
   stock       Int           @default(0)
+  cartItems   CartItem[]
   sku         String?       @unique
   status      ProductStatus @default(DRAFT)
   createdAt   DateTime      @default(now())
