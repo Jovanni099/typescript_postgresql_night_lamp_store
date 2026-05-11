@@ -1,6 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Get,
+  Controller,
+  Post,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AddToCartDto } from './dto/add-to-cart.dto';
+import { FindCartDto } from './dto/find-cart.dto';
 
 @Controller('cart')
 export class CartController {
@@ -14,5 +22,10 @@ export class CartController {
   @Post('add')
   addToCart(@Body() dto: AddToCartDto) {
     return this.cartService.addToCart(dto);
+  }
+
+  @Get(':id')
+  findOne(@Param() params: FindCartDto) {
+    return this.cartService.findOne(params.id);
   }
 }
