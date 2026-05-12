@@ -5,10 +5,12 @@ import {
   Post,
   Param,
   ParseIntPipe,
+  Patch,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AddToCartDto } from './dto/add-to-cart.dto';
 import { FindCartDto } from './dto/find-cart.dto';
+import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 
 @Controller('cart')
 export class CartController {
@@ -27,5 +29,13 @@ export class CartController {
   @Get(':id')
   findOne(@Param() params: FindCartDto) {
     return this.cartService.findOne(params.id);
+  }
+
+  @Patch('items/:id')
+  updateItemQuantity(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateCartItemDto,
+  ) {
+    return this.cartService.updateItemQuantity(id, dto);
   }
 }
