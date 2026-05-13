@@ -49,7 +49,14 @@ export class CartService {
       throw new NotFoundException('Cart not found');
     }
 
-    return cart;
+    const totalPrice = cart.items.reduce((sum, item) => {
+      return sum + item.quantity * item.product.price;
+    }, 0);
+
+    return {
+      ...cart,
+      totalPrice,
+    };
   }
 
   async updateItemQuantity(itemId: number, dto: UpdateCartItemDto) {
