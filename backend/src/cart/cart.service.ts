@@ -75,4 +75,22 @@ export class CartService {
       },
     });
   }
+
+  async removeItem(itemId: number) {
+    const item = await this.prisma.cartItem.findUnique({
+      where: {
+        id: itemId,
+      },
+    });
+
+    if (!item) {
+      throw new NotFoundException('Cart item not found');
+    }
+
+    return this.prisma.cartItem.delete({
+      where: {
+        id: itemId,
+      },
+    });
+  }
 }

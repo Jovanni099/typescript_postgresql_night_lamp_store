@@ -6,11 +6,13 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AddToCartDto } from './dto/add-to-cart.dto';
 import { FindCartDto } from './dto/find-cart.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
+import { RemoveCartItemDto } from './dto/remove-cart-item.dto';
 
 @Controller('cart')
 export class CartController {
@@ -37,5 +39,10 @@ export class CartController {
     @Body() dto: UpdateCartItemDto,
   ) {
     return this.cartService.updateItemQuantity(id, dto);
+  }
+
+  @Delete('items/:id')
+  removeItem(@Param() params: RemoveCartItemDto) {
+    return this.cartService.removeItem(params.id);
   }
 }
