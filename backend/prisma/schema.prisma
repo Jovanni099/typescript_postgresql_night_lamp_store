@@ -40,7 +40,7 @@ model Cart {
 
 model CartItem {
   id        Int     @id @default(autoincrement())
-  cartId    Int
+  cartId    Int 
   productId Int
   quantity  Int
 

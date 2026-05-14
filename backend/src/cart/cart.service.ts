@@ -29,6 +29,25 @@ export class CartService {
     if (dto.quantity > product.stock) {
       throw new BadRequestException('Not enough stock');
     }
+
+    const existingItem = await this.prisma.cartItem.findFirst({
+      where: {
+        cartId: dto.cartId,
+        productId: dto.productId,
+      },
+    });
+
+    if (existingItem) {
+      return this.prisma.cartItem.update({
+        where: {
+          id: existingItem.id,
+        },
+        data: {
+          quantity: existingItem.quantity + dto.quantity,
+        },
+      });
+    }
+
     return this.prisma.cartItem.create({
       data: {
         cartId: dto.cartId,
