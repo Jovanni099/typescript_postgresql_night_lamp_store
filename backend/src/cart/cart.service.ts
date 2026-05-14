@@ -71,6 +71,9 @@ export class CartService {
       where: {
         id: itemId,
       },
+      include: {
+        product: true,
+      },
       //   data: {
       //     quantity: dto.quantity,
       //   },
@@ -78,6 +81,10 @@ export class CartService {
 
     if (!item) {
       throw new NotFoundException('Cart item not found');
+    }
+
+    if (dto.quantity > item.product.stock) {
+      throw new BadRequestException('Not enough stock');
     }
 
     return this.prisma.cartItem.update({
