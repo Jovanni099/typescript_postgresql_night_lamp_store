@@ -26,6 +26,16 @@ export class CartService {
       throw new Error('Product not found');
     }
 
+    const cart = await this.prisma.cart.findUnique({
+      where: {
+        id: dto.cartId,
+      },
+    });
+
+    if (!cart) {
+      throw new NotFoundException('Cart not found');
+    }
+
     if (dto.quantity > product.stock) {
       throw new BadRequestException('Not enough stock');
     }
